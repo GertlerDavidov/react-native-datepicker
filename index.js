@@ -30,7 +30,8 @@ class DatePicker extends Component {
       date: this.getDate(),
       modalVisible: false,
       disabled: this.props.disabled,
-      animatedHeight: new Animated.Value(0)
+      animatedHeight: new Animated.Value(0),
+      pickedFirstTime: false,
     };
 
     this.datePicked = this.datePicked.bind(this);
@@ -119,6 +120,8 @@ class DatePicker extends Component {
   }
 
   datePicked() {
+    console.log("PICKED");
+    this.setState({ pickedFirstTime: true });
     if (typeof this.props.onDateChange === 'function') {
       this.props.onDateChange(this.getDateStr(this.state.date), this.state.date);
     }
@@ -126,7 +129,7 @@ class DatePicker extends Component {
 
   getTitleElement() {
     const {date, placeholder} = this.props;
-    if (!date && placeholder) {
+    if (date && placeholder && !this.state.pickedFirstTime) {
       return (<Text style={[Style.placeholderText, this.props.customStyles.placeholderText]}>{placeholder}</Text>);
     }
     return (<Text style={[Style.dateText, this.props.customStyles.dateText]}>{this.getDateStr()}</Text>);
@@ -262,7 +265,7 @@ class DatePicker extends Component {
                     mode={this.props.mode}
                     minimumDate={this.props.minDate && this.getDate(this.props.minDate)}
                     maximumDate={this.props.maxDate && this.getDate(this.props.maxDate)}
-                    onDateChange={(date) => this.setState({date: date})}
+                    onDateChange={(date) => { this.setState({date: date, pickedFirstTime: true }) }}
                     style={[Style.datePicker, customStyles.datePicker]}
                   />
                   <TouchableHighlight
